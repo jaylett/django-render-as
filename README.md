@@ -17,7 +17,7 @@ where `<module>` is the last component of the module path and
 class is `my_library.sub_library.MyClass` the first template checked
 will be `sub_library/myclass.html`).
 
-With `DEBUG = True`, various template errors will be shown as the
+With `TEMPLATE_DEBUG = True`, various template errors will be shown as the
 template output along with a stack trace in the `runserver`. Neither
 appears when running live.
 
