@@ -59,7 +59,7 @@ class RenderAsNode(template.Node):
         
         context.update({ 'object': object })
         try:
-            main_template = os.path.join(app_name, "%s_%s.html" % (model_name, self.type))
+            main_template = os.path.join(app_name, "render_as", "%s_%s.html" % (model_name, self.type))
             backup_template = os.path.join('render_as', "default_%s.html" % (self.type,))
             result = render_to_string([main_template, backup_template], context)
         except template.TemplateDoesNotExist, e:

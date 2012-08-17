@@ -82,13 +82,13 @@ class TestRenderAsErrors(TestCase):
         t = template.Template("{% load render_as %}{% render_as obj missing %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
-        self.assertEqual(u"[[ no such template in render_as call (render_as/testmodel_missing.html, render_as/default_missing.html) ]]", t.render(c))
+        self.assertEqual(u"[[ no such template in render_as call (render_as/render_as/testmodel_missing.html, render_as/default_missing.html) ]]", t.render(c))
     
     def test_template_syntax_error(self):
         t = template.Template("{% load render_as %}{% render_as obj syntax_error %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
-        self.assertEqual(u"[[ template syntax error in render_as call (render_as/testmodel_syntax_error.html, render_as/default_syntax_error.html) ]]", t.render(c))
+        self.assertEqual(u"[[ template syntax error in render_as call (render_as/render_as/testmodel_syntax_error.html, render_as/default_syntax_error.html) ]]", t.render(c))
 
     def test_context_popped_after_error(self):
         t = template.Template("{% load render_as %}{% render_as obj syntax_error %}")
