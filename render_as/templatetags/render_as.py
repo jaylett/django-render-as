@@ -32,9 +32,9 @@ def render_as(parser, token):
 
 
 class RenderAsNode(template.Node):
-    def __init__(self, object_ref, type):
+    def __init__(self, object_ref, type_ref):
         self.object = template.Variable(object_ref)
-        self.type = type
+        self.type = template.Variable(type_ref)
         
     def render(self, context):
         result = u""
@@ -44,6 +44,14 @@ class RenderAsNode(template.Node):
             if settings.TEMPLATE_DEBUG:
                 traceback.print_exc()
                 return u"[[ no such variable '%s' in render_as call ]]" % self.object
+            else:
+                return u""
+        try:
+            type = self.type.resolve(context)
+        except template.VariableDoesNotExist:
+            if settings.TEMPLATE_DEBUG:
+                traceback.print_exc()
+                return u"[[ no such variable '%s' in render_as call ]]" % self.type
             else:
                 return u""
 
@@ -63,8 +71,8 @@ class RenderAsNode(template.Node):
         
         context.update({ 'object': object })
         try:
-            main_template = os.path.join(app_name, "render_as", "%s_%s.html" % (model_name, self.type))
-            backup_template = os.path.join('render_as', "default_%s.html" % (self.type,))
+            main_template = os.path.join(app_name, "render_as", "%s_%s.html" % (model_name, type))
+            backup_template = os.path.join('render_as', "default_%s.html" % (type,))
             result = render_to_string([main_template, backup_template], context)
         except template.TemplateDoesNotExist, e:
             if settings.TEMPLATE_DEBUG:

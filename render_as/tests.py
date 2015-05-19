@@ -23,19 +23,25 @@ class TestModel3(models.Model):
 class TestRenderAs(TestCase):
     
     def test_simple_render_as_invocation(self):
-        t = template.Template("{% load render_as %}{% render_as obj simple %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'simple' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
         self.assertEqual("Test model whatever", t.render(c))
 
+    def test_type_as_variable(self):
+        t = template.Template("{% load render_as %}{% render_as obj type %}")
+        o = TestModel.objects.create(name='whatever')
+        c = template.Context({'obj': o, 'type': 'simple'})
+        self.assertEqual("Test model whatever", t.render(c))
+
     def test_simple_render_as_invocation_default_template(self):
-        t = template.Template("{% load render_as %}{% render_as obj simple %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'simple' %}")
         o = TestModel2.objects.create(name='whatever')
         c = template.Context({'obj': o})
         self.assertEqual("Just a simple TestModel2 object", t.render(c))
 
     def test_nested_render_as_invocation(self):
-        t = template.Template("{% load render_as %}{% render_as obj nested %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'nested' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o, 'extra': 'something'})
         self.assertEqual(u"whatever, something", t.render(c))
@@ -68,30 +74,36 @@ class TestRenderAsErrors(TestCase):
             self.fail("Did not raise TemplateSyntaxError")
         
     def test_unresolvable_variable(self):
-        t = template.Template("{% load render_as %}{% render_as thing simple %}")
+        t = template.Template("{% load render_as %}{% render_as thing 'simple' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
         self.assertEqual(u"[[ no such variable 'thing' in render_as call ]]", t.render(c))
+
+    def test_unresolvable_type_variable(self):
+        t = template.Template("{% load render_as %}{% render_as obj simple %}")
+        o = TestModel.objects.create(name='whatever')
+        c = template.Context({'obj': o})
+        self.assertEqual(u"[[ no such variable 'simple' in render_as call ]]", t.render(c))
         
     def test_not_an_object(self):
-        t = template.Template("{% load render_as %}{% render_as obj simple %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'simple' %}")
         c = template.Context({'obj': u"huzzah" })
         self.assertEqual(u"Just a simple huzzah", t.render(c))
         
     def test_no_such_template(self):
-        t = template.Template("{% load render_as %}{% render_as obj missing %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'missing' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
         self.assertEqual(u"[[ no such template in render_as call (render_as/render_as/testmodel_missing.html, render_as/default_missing.html) ]]", t.render(c))
     
     def test_template_syntax_error(self):
-        t = template.Template("{% load render_as %}{% render_as obj syntax_error %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'syntax_error' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
         self.assertEqual(u"[[ template syntax error in render_as call (render_as/render_as/testmodel_syntax_error.html, render_as/default_syntax_error.html) ]]", t.render(c))
 
     def test_context_popped_after_error(self):
-        t = template.Template("{% load render_as %}{% render_as obj syntax_error %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'syntax_error' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
         t.render(c)
@@ -110,7 +122,7 @@ class TestRenderAsNonModelObject(TestCase):
         class MyClass(object):
             pass
 
-        t = template.Template("{% load render_as %}{% render_as obj correct %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'correct' %}")
         c = template.Context({'obj': MyClass()})
         self.assertEqual(u"Test non-model object.\n", t.render(c))
 
@@ -143,13 +155,13 @@ class TestRenderAsWithTestModel3(TestCase):
         transaction.commit_unless_managed(using=db)
 
     def test_simple_render_as_invocation_default_template_different_appname(self):
-        t = template.Template("{% load render_as %}{% render_as obj simple2 %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'simple2' %}")
         o = TestModel3.objects.create(name='whatever')
         c = template.Context({'obj': o})
         self.assertEqual("Just a simple 2 TestModel3 object", t.render(c))
     
     def test_simple_render_as_invocation_different_appname(self):
-        t = template.Template("{% load render_as %}{% render_as obj simple %}")
+        t = template.Template("{% load render_as %}{% render_as obj 'simple' %}")
         o = TestModel3.objects.create(name='whatever')
         c = template.Context({'obj': o})
         self.assertEqual("Test model 3 whatever\n", t.render(c))

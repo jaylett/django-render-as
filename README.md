@@ -1,6 +1,6 @@
 # Django "render_as" template tag
 
-`{% render_as obj type %}` is a simple template tag that renders a
+`{% render_as obj "type" %}` is a simple template tag that renders a
 suitable template based on the object passed to it and a type. For
 Django model objects, the template will be one of:
 
