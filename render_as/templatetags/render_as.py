@@ -50,11 +50,15 @@ class RenderAsNode(template.Node):
         try:
             # default to <app>/<model>...
             app_name = object.__class__._meta.app_label
-            model_name = object.__class__._meta.module_name
+            model_name = object.__class__._meta.model_name
         except AttributeError:
             # fall back to most specific module and lowercased
             # class name
-            app_name = type(object).__module__.split(".")[-1]
+            try:
+                app_name = type(object).__module__.split(".")[-1]
+            except TypeError:
+                # SafeText has snuck its way in
+                app_name = object.__class__.__module__.split(".")[-1]
             model_name = object.__class__.__name__.lower()
         
         context.update({ 'object': object })

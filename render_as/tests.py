@@ -95,7 +95,13 @@ class TestRenderAsErrors(TestCase):
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
         t.render(c)
-        self.assertEqual([{'obj': o}], c.dicts)
+        self.assertEqual(
+            [
+                {'False': False, 'None': None, 'True': True},
+                {'obj': o},
+            ],
+            c.dicts,
+        )
 
 
 class TestRenderAsNonModelObject(TestCase):

@@ -26,7 +26,7 @@ setup(
     author='James Aylett',
     author_email='james@tartarus.org',
     install_requires=[
-        'Django>=1.3',
+        'Django>=1.7',
     ],
     classifiers=[
         'Intended Audience :: Developers',
