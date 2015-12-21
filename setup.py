@@ -5,7 +5,7 @@ except ImportError:
     from distutils.core import setup
 
 PACKAGE = 'django-render-as'
-VERSION = '1.0'
+VERSION = '1.1'
 
 package_data = {
     'render_as': [
@@ -26,12 +26,13 @@ setup(
     author='James Aylett',
     author_email='james@tartarus.org',
     install_requires=[
-        'Django>=1.7',
+        'Django~=1.8',
     ],
     classifiers=[
         'Intended Audience :: Developers',
         'Framework :: Django',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
     ],
 )

@@ -27,7 +27,7 @@ def render_as(parser, token):
     try:
         tag_name, object_ref, type = token.split_contents()
     except ValueError:
-        raise template.TemplateSyntaxError, u"'%s' tag requires two arguments" % token.contents.split()[0]
+        raise template.TemplateSyntaxError(u"'%s' tag requires two arguments" % token.contents.split()[0])
     return RenderAsNode(object_ref, type)
 
 
@@ -57,8 +57,8 @@ class RenderAsNode(template.Node):
 
         try:
             # default to <app>/<model>...
-            app_name = object.__class__._meta.app_label
-            model_name = object.__class__._meta.model_name
+            app_name = object._meta.app_label
+            model_name = object._meta.model_name
         except AttributeError:
             # fall back to most specific module and lowercased
             # class name
@@ -74,11 +74,11 @@ class RenderAsNode(template.Node):
             main_template = os.path.join(app_name, "render_as", "%s_%s.html" % (model_name, type))
             backup_template = os.path.join('render_as', "default_%s.html" % (type,))
             result = render_to_string([main_template, backup_template], context)
-        except template.TemplateDoesNotExist, e:
+        except template.TemplateDoesNotExist as e:
             if settings.TEMPLATE_DEBUG:
                 traceback.print_exc()
                 result = u"[[ no such template in render_as call (%s) ]]" % ", ".join([main_template, backup_template])
-        except template.TemplateSyntaxError, e:
+        except template.TemplateSyntaxError as e:
             if settings.TEMPLATE_DEBUG:
                 traceback.print_exc()
                 result = u"[[ template syntax error in render_as call (%s) ]]" % ", ".join([main_template, backup_template])
