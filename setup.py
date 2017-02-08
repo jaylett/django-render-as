@@ -5,12 +5,12 @@ except ImportError:
     from distutils.core import setup
 
 PACKAGE = 'django-render-as'
-VERSION = '1.1'
+VERSION = '1.2'
 
 package_data = {
     'render_as': [
-        'templates/avoid_clash_with_real_app/*.html',
-        'templates/render_as/*.html',
+        'test_templates/avoid_clash_with_real_app/*.html',
+        'test_templates/render_as/*.html',
         ],
 }
 
