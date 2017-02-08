@@ -49,28 +49,28 @@ class TestRenderAs(TestCase):
 class TestRenderAsErrors(TestCase):
     
     def test_too_few_args_0(self):
-        try:
-            t = template.Template("{% load render_as %}{% render_as %}")
-        except template.TemplateSyntaxError as e:
-            self.assertEqual(u"'render_as' tag requires two arguments", smart_text(e))
-        else:
-            self.fail("Did not raise TemplateSyntaxError")
+        with self.assertRaises(template.TemplateSyntaxError) as raised:
+            template.Template("{% load render_as %}{% render_as %}")
+        self.assertEqual(
+            u"'render_as' tag requires two arguments",
+            smart_text(raised.exception),
+        )
         
     def test_too_few_args_1(self):
-        try:
-            t = template.Template("{% load render_as %}{% render_as thing %}")
-        except template.TemplateSyntaxError as e:
-            self.assertEqual(u"'render_as' tag requires two arguments", smart_text(e))
-        else:
-            self.fail("Did not raise TemplateSyntaxError")
+        with self.assertRaises(template.TemplateSyntaxError) as raised:
+            template.Template("{% load render_as %}{% render_as thing %}")
+        self.assertEqual(
+            u"'render_as' tag requires two arguments",
+            smart_text(raised.exception),
+        )
         
     def test_too_many_args_3(self):
-        try:
-            t = template.Template("{% load render_as %}{% render_as thing other_thing yet_another_thing %}")
-        except template.TemplateSyntaxError as e:
-            self.assertEqual(u"'render_as' tag requires two arguments", smart_text(e))
-        else:
-            self.fail("Did not raise TemplateSyntaxError")
+        with self.assertRaises(template.TemplateSyntaxError) as raised:
+            template.Template("{% load render_as %}{% render_as thing other_thing yet_another_thing %}")
+        self.assertEqual(
+            u"'render_as' tag requires two arguments",
+            smart_text(raised.exception),
+        )
         
     def test_unresolvable_variable(self):
         t = template.Template("{% load render_as %}{% render_as thing 'simple' %}")
