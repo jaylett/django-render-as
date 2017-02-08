@@ -2,7 +2,6 @@ import os.path
 import traceback
 
 from django import template
-from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse, resolve
 
@@ -41,7 +40,7 @@ class RenderAsNode(template.Node):
         try:
             object = self.object.resolve(context)
         except template.VariableDoesNotExist:
-            if settings.TEMPLATE_DEBUG:
+            if context.template.engine.debug:
                 traceback.print_exc()
                 return u"[[ no such variable '%s' in render_as call ]]" % self.object
             else:
@@ -49,7 +48,7 @@ class RenderAsNode(template.Node):
         try:
             type = self.type.resolve(context)
         except template.VariableDoesNotExist:
-            if settings.TEMPLATE_DEBUG:
+            if context.template.engine.debug:
                 traceback.print_exc()
                 return u"[[ no such variable '%s' in render_as call ]]" % self.type
             else:
@@ -75,11 +74,11 @@ class RenderAsNode(template.Node):
             backup_template = os.path.join('render_as', "default_%s.html" % (type,))
             result = render_to_string([main_template, backup_template], context)
         except template.TemplateDoesNotExist as e:
-            if settings.TEMPLATE_DEBUG:
+            if context.template.engine.debug:
                 traceback.print_exc()
                 result = u"[[ no such template in render_as call (%s) ]]" % ", ".join([main_template, backup_template])
         except template.TemplateSyntaxError as e:
-            if settings.TEMPLATE_DEBUG:
+            if context.template.engine.debug:
                 traceback.print_exc()
                 result = u"[[ template syntax error in render_as call (%s) ]]" % ", ".join([main_template, backup_template])
         finally:

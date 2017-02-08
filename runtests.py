@@ -6,9 +6,21 @@ from django.conf import settings
 
 settings.configure(
     DEBUG=True,
-    TEMPLATE_DEBUG = True,
-    TEMPLATE_DIRS = [
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), 'render_as', 'test_templates'),
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [
+                os.path.join(
+                    os.path.dirname(os.path.realpath(__file__)),
+                    'render_as',
+                    'test_templates',
+                ),
+            ],
+            'APP_DIRS': False,
+            'OPTIONS': {
+                'debug': True,
+            },
+        },
     ],
     INSTALLED_APPS = [
         'render_as',
