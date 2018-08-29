@@ -1,3 +1,6 @@
-ENV
 *~
 *.pyc
+/build/
+/dist/
+/django_render_as.egg-info/
+/.tox/
