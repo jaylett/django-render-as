@@ -14,13 +14,13 @@ class TestModel2(models.Model):
 
 class TestModel3(models.Model):
     name = models.CharField(max_length=255)
-    
+
     class Meta:
         app_label = 'avoid_clash_with_real_app'
 
 
 class TestRenderAs(TestCase):
-    
+
     def test_simple_render_as_invocation(self):
         t = template.Template("{% load render_as %}{% render_as obj 'simple' %}")
         o = TestModel.objects.create(name='whatever')
@@ -47,7 +47,7 @@ class TestRenderAs(TestCase):
 
 
 class TestRenderAsErrors(TestCase):
-    
+
     def test_too_few_args_0(self):
         with self.assertRaises(template.TemplateSyntaxError) as raised:
             template.Template("{% load render_as %}{% render_as %}")
@@ -55,7 +55,7 @@ class TestRenderAsErrors(TestCase):
             u"'render_as' tag requires two arguments",
             smart_text(raised.exception),
         )
-        
+
     def test_too_few_args_1(self):
         with self.assertRaises(template.TemplateSyntaxError) as raised:
             template.Template("{% load render_as %}{% render_as thing %}")
@@ -63,7 +63,7 @@ class TestRenderAsErrors(TestCase):
             u"'render_as' tag requires two arguments",
             smart_text(raised.exception),
         )
-        
+
     def test_too_many_args_3(self):
         with self.assertRaises(template.TemplateSyntaxError) as raised:
             template.Template("{% load render_as %}{% render_as thing other_thing yet_another_thing %}")
@@ -71,7 +71,7 @@ class TestRenderAsErrors(TestCase):
             u"'render_as' tag requires two arguments",
             smart_text(raised.exception),
         )
-        
+
     def test_unresolvable_variable(self):
         t = template.Template("{% load render_as %}{% render_as thing 'simple' %}")
         o = TestModel.objects.create(name='whatever')
@@ -98,7 +98,7 @@ class TestRenderAsErrors(TestCase):
         t = template.Template("{% load render_as %}{% render_as obj 'simple' %}")
         c = template.Context({'obj': u"huzzah"})
         self.assertEqual(u"Just a simple huzzah", t.render(c))
-        
+
     def test_no_such_template(self):
         t = template.Template("{% load render_as %}{% render_as obj 'missing' %}")
         o = TestModel.objects.create(name='whatever')
@@ -149,7 +149,7 @@ class TestRenderAsWithTestModel3(TestCase):
         o = TestModel3(name='whatever')
         c = template.Context({'obj': o})
         self.assertEqual("Just a simple 2 TestModel3 object", t.render(c))
-    
+
     def test_simple_render_as_invocation_different_appname(self):
         t = template.Template("{% load render_as %}{% render_as obj 'simple' %}")
         o = TestModel3(name='whatever')

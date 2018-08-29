@@ -1,24 +1,24 @@
 import os.path
 
 from django import template
-from django.core.urlresolvers import reverse, resolve
 from django.template.loader import select_template
 
 
 register = template.Library()
 
+
 @register.tag
 def render_as(parser, token):
     """
     Template tag which renders a suitable template for the object. Call as:
-    
+
     {% render_as obj type %}
-    
+
     The template is found by looking in order for:
-    
+
      * <app>/<model>_<type>.html
      * render_as/default_<type>.html
-     
+
     and rendering with the context at the time of the call, updated to
     include `object` as the first parameter to the {% render_as ... %} call.
     """

@@ -3,10 +3,12 @@ import sys
 
 import django
 from django.conf import settings
+from django.test.runner import DiscoverRunner
+
 
 settings.configure(
     DEBUG=True,
-    TEMPLATES = [
+    TEMPLATES=[
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
             'DIRS': [
@@ -22,21 +24,22 @@ settings.configure(
             },
         },
     ],
-    INSTALLED_APPS = [
+    INSTALLED_APPS=[
         'render_as',
     ],
-    DATABASES = {
+    DATABASES={
         'default': {
              'ENGINE': 'django.db.backends.sqlite3',
         }
     },
 )
 
+
 if hasattr(django, 'setup'):
     django.setup()
 
-from django.test.runner import DiscoverRunner
+
 test_runner = DiscoverRunner(verbosity=1, failfast=False)
 failures = test_runner.run_tests(['render_as', ])
-if failures: #pragma no cover
+if failures:  # pragma no cover
     sys.exit(failures)
