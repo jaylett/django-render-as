@@ -28,6 +28,9 @@ setup(
     install_requires=[
         'Django~=1.11',
     ],
+    tests_require=[
+        'tox~=3.2.1',
+    ],
     classifiers=[
         'Intended Audience :: Developers',
         'Framework :: Django',
