@@ -76,36 +76,52 @@ class TestRenderAsErrors(TestCase):
         t = template.Template("{% load render_as %}{% render_as thing 'simple' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
-        self.assertEqual(u"[[ no such variable 'thing' in render_as call ]]", t.render(c))
+        with self.assertRaises(template.TemplateSyntaxError) as raised:
+            t.render(c)
+        self.assertEqual(
+            u"no such variable 'thing' in render_as call",
+            smart_text(raised.exception),
+        )
 
     def test_unresolvable_type_variable(self):
         t = template.Template("{% load render_as %}{% render_as obj simple %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
-        self.assertEqual(u"[[ no such variable 'simple' in render_as call ]]", t.render(c))
-        
+        with self.assertRaises(template.TemplateSyntaxError) as raised:
+            t.render(c)
+        self.assertEqual(
+            u"no such variable 'simple' in render_as call",
+            smart_text(raised.exception),
+        )
+
     def test_not_an_object(self):
         t = template.Template("{% load render_as %}{% render_as obj 'simple' %}")
-        c = template.Context({'obj': u"huzzah" })
+        c = template.Context({'obj': u"huzzah"})
         self.assertEqual(u"Just a simple huzzah", t.render(c))
         
     def test_no_such_template(self):
         t = template.Template("{% load render_as %}{% render_as obj 'missing' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
-        self.assertEqual(u"[[ no such template in render_as call (render_as/render_as/testmodel_missing.html, render_as/default_missing.html) ]]", t.render(c))
-    
+        with self.assertRaises(template.TemplateDoesNotExist):
+            t.render(c)
+
     def test_template_syntax_error(self):
         t = template.Template("{% load render_as %}{% render_as obj 'syntax_error' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
-        self.assertEqual(u"[[ template syntax error in render_as call (render_as/render_as/testmodel_syntax_error.html, render_as/default_syntax_error.html) ]]", t.render(c))
+        with self.assertRaises(template.TemplateSyntaxError) as raised:
+            t.render(c)
+        self.assertTrue(
+            u"Invalid block tag on line" in smart_text(raised.exception),
+        )
 
     def test_context_popped_after_error(self):
         t = template.Template("{% load render_as %}{% render_as obj 'syntax_error' %}")
         o = TestModel.objects.create(name='whatever')
         c = template.Context({'obj': o})
-        t.render(c)
+        with self.assertRaises(template.TemplateSyntaxError):
+            t.render(c)
         self.assertEqual(
             [
                 {'False': False, 'None': None, 'True': True},

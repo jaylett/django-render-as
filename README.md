@@ -17,9 +17,12 @@ where `<module>` is the last component of the module path and
 class is `my_library.sub_library.MyClass` the first template checked
 will be `sub_library/myclass.html`).
 
-With the template backend option `debug` enabled, various template
-errors will be shown as the template output along with a stack trace
-in the `runserver`. Neither appears when running live.
+With the template backend option `debug` enabled, a
+`TemplateSyntaxError` exception is raised for errors; otherwise just
+renders blank.
 
-James Aylett
-http://tartarus.org/james/
+Note that this is currently untested with template engines other than
+DTL, although it should in theory work.
+
+[James Aylett][Home]
+[Home]: http://tartarus.org/james/
